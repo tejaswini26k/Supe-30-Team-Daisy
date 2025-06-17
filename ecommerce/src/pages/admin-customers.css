@@ -1,0 +1,106 @@
+.admin-customers {
+    padding: 2rem;
+    font-family: sans-serif;
+  }
+  
+  .page-title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .customer-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .search-bar {
+    padding: 10px 14px;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .btn-group {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  
+  .filter-btn {
+    background-color: #eee;
+  }
+  
+  .add-btn {
+    background-color: #0f172a;
+    color: white;
+  }
+  
+  .customer-table table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .customer-table th, .customer-table td {
+    padding: 14px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .customer-table th {
+    background-color: #f9f9f9;
+  }
+  
+  .customer-table td:last-child {
+    text-align: center;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .admin-customers {
+    padding: 2rem;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .controls .btn {
+    margin-left: 10px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .delete-btn {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    font-weight: bold;
+  }
+  
+  .customer-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  
+  .customer-table th,
+  .customer-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+  }
+  
