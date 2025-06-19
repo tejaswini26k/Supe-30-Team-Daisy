@@ -1,9 +1,14 @@
 const bcrypt = require('bcryptjs');
 
 
+
 const express = require('express');
 const router = express.Router();
 const pool = require('./db');
+const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
+
 
 // USERS
 router.post('/signup', async (req, res) => {
@@ -62,13 +67,18 @@ router.get('/customers', async (req, res) => {
   res.json(rows);
 });
 router.post('/customers', async (req, res) => {
-  const { customer_name, phone_number, address, user_id = null } = req.body;
+  const { customer_name, phone_number = null, address = null, email, password, store_id = null } = req.body;
+
+  if (!customer_name || !email || !password) {
+    return res.status(400).json({ error: 'customer_name, email, and password are required' });
+  }
 
   try {
     const [result] = await pool.query(
-      `INSERT INTO customers (customer_name, phone_number, address, date_joined, user_id)
-       VALUES (?, ?, ?, CURDATE(), ?)`,
-      [customer_name, phone_number, address, user_id]
+      `INSERT INTO customers (
+         customer_name, phone_number, address, email, password, date_joined, store_id
+       ) VALUES (?, ?, ?, ?, ?, CURDATE(), ?)`,
+      [customer_name, phone_number, address, email, password, store_id]
     );
 
     res.status(201).json({ customer_id: result.insertId });
@@ -77,6 +87,7 @@ router.post('/customers', async (req, res) => {
     res.status(500).json({ error: 'Failed to create customer' });
   }
 });
+
 
 
 // ORDERS
@@ -223,7 +234,7 @@ router.post('/sales', async (req, res) => {
 
 
 // STORES
-router.get('/stores', async (req, res) => {
+/*router.get('/stores', async (req, res) => {
   const [rows] = await pool.query('SELECT * FROM stores');
   res.json(rows);
 });
@@ -236,7 +247,138 @@ router.post('/stores', async (req, res) => {
     [store_name, store_email, store_address]
   );
   res.status(201).json({ store_id: result.insertId });
+});*/
+
+// Ensure the uploads directory exists
+const uploadPath = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
+
+
+const storage = multer.diskStorage({
+  destination: uploadPath,
+  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 });
+const upload = multer({ storage });
+
+// CREATE STORE
+router.post('/stores', upload.single('logo'), (req, res) => {
+  const {
+    store_name, slug, description, store_email,
+    facebook, instagram, theme, primary_color,
+    currency, timezone, business_type, password
+  } = req.body;
+
+  const logo = req.file ? `/uploads/${req.file.filename}` : null;
+
+  const sql = `
+    INSERT INTO stores
+    (store_name, slug, description, store_email, facebook, instagram,
+     theme, primary_color, logo, currency, timezone, business_type, password)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  const values = [store_name, slug, description, store_email, facebook, instagram,
+    theme, primary_color, logo, currency, timezone, business_type, password];
+
+  pool.query(sql, values, (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'Store created', id: result.insertId });
+  });
+});
+
+// GET ALL STORES
+router.get('/stores', (req, res) => {
+  pool.query('SELECT * FROM stores', (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+// GET SINGLE STORE
+router.get('/stores/:id', (req, res) => {
+  pool.query(
+    'SELECT * FROM stores WHERE store_id = ?',
+    [req.params.id],
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (rows.length === 0) return res.status(404).json({ error: 'Store not found' });
+      res.json(rows[0]);
+    }
+  );
+});
+
+
+// UPDATE STORE
+router.put('/:id', upload.single('logo'), (req, res) => {
+  const {
+    store_name, slug, description, store_email,
+    facebook, instagram, theme, primary_color,
+    currency, timezone, business_type, password
+  } = req.body;
+
+  const logo = req.file ? `/uploads/${req.file.filename}` : req.body.existingLogo;
+
+  const sql = `
+    UPDATE stores
+    SET store_name = ?, slug = ?, description = ?, store_email = ?, facebook = ?,
+        instagram = ?, theme = ?, primary_color = ?, logo = ?, currency = ?, timezone = ?,
+        business_type = ?, password = ?
+    WHERE store_id = ?`;
+
+  const values = [store_name, slug, description, store_email, facebook, instagram,
+    theme, primary_color, logo, currency, timezone, business_type, password, req.params.id];
+
+  pool.query(sql, values, (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'Store updated' });
+  });
+});
+
+// DELETE STORE
+router.delete('/:id', (req, res) => {
+  pool.query('DELETE FROM stores WHERE store_id = ?', [req.params.id], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'Store deleted' });
+  });
+});
+
+// Example route (POST /stores)
+router.post('/stores', upload.single('logo'), (req, res) => {
+  const {
+    store_name,
+    slug,
+    description,
+    store_email,
+    password,
+    facebook,
+    instagram,
+    theme,
+    primary_color,
+    logo,
+    currency,
+    timezone,
+    business_type
+  } = req.body;
+console.log("Received store data:", req.body);
+console.log("Uploaded logo:", req.file);
+
+  const sql = `
+  INSERT INTO stores
+  (store_name, slug, description, store_email, facebook, instagram,
+   theme, primary_color, logo, currency, timezone, business_type, password)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+`;
+
+  pool.query(sql, [
+    store_name, slug, description, store_email, password, facebook, instagram,
+    theme, primary_color, logo, currency, timezone, business_type
+  ], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(201).json({ message: 'Store created successfully', store_id: result.insertId });
+  });
+});
+
+
 console.log('Exporting router:', typeof router);
 module.exports = router;
 
