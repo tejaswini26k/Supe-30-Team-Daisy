@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import './stores.css';
 
-export default function StoreSetup() {
+
+export default function Stores() {
   const [storeName, setStoreName] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [facebook, setFacebook] = useState("");
   const [instagram, setInstagram] = useState("");
   const [theme, setTheme] = useState("light");
@@ -15,11 +17,24 @@ export default function StoreSetup() {
   const [currency, setCurrency] = useState("USD");
   const [timezone, setTimezone] = useState("UTC");
   const [businessType, setBusinessType] = useState("Retail");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   // Auto-generate slug
   useEffect(() => {
     setSlug(storeName.trim().toLowerCase().replace(/\s+/g, "-"));
   }, [storeName]);
+  useEffect(() => {
+  const interval = setInterval(() => {
+    setCurrentTime(new Date());
+  }, 1000);
+
+  return () => clearInterval(interval); // cleanup on unmount
+}, []);
+
+
+
+
 
   const handleLogoChange = (e) => {
     const file = e.target.files[0];
@@ -39,6 +54,7 @@ export default function StoreSetup() {
   formData.append('slug', slug);
   formData.append('description', description);
   formData.append('store_email', email);
+  formData.append('password', password);
   formData.append('facebook', facebook);
   formData.append('instagram', instagram);
   formData.append('theme', theme);
@@ -46,7 +62,7 @@ export default function StoreSetup() {
   formData.append('currency', currency);
   formData.append('timezone', timezone);
   formData.append('business_type', businessType);
-  formData.append('password', '123456'); // Replace with actual value or input field
+
   if (logo) {
     formData.append('logo', logo);
   }
@@ -58,12 +74,12 @@ export default function StoreSetup() {
     });
 
     const result = await res.json();
+
     if (res.ok) {
-      alert("✅ Store created successfully!");
-      console.log("Server response:", result);
+      setShowSuccessModal(true); // ✅ Show popup here
     } else {
-      alert("❌ Failed to create store.");
       console.error(result);
+      alert("❌ Failed to create store.");
     }
   } catch (err) {
     console.error("Error submitting form:", err);
@@ -72,8 +88,31 @@ export default function StoreSetup() {
 };
 
 
+// Generate a darker/lighter shade of primary color
+function shadeColor(color, percent) {
+  let R = parseInt(color.substring(1, 3), 16);
+  let G = parseInt(color.substring(3, 5), 16);
+  let B = parseInt(color.substring(5, 7), 16);
+
+  R = parseInt((R * (100 + percent)) / 100);
+  G = parseInt((G * (100 + percent)) / 100);
+  B = parseInt((B * (100 + percent)) / 100);
+
+  R = R < 255 ? R : 255;
+  G = G < 255 ? G : 255;
+  B = B < 255 ? B : 255;
+
+  const RR = R.toString(16).padStart(2, "0");
+  const GG = G.toString(16).padStart(2, "0");
+  const BB = B.toString(16).padStart(2, "0");
+
+  return `#${RR}${GG}${BB}`;
+}
+
+
   return (
-   <div className="store-setup-wrapper">
+   <div className="store-setup-wrapper max-w-4xl mx-auto px-4">
+
       <form
         onSubmit={handleSubmit}
         form className="store-form"
@@ -129,6 +168,21 @@ export default function StoreSetup() {
             />
           </div>
 
+          <div>
+  <label className="block font-medium mb-1">Password</label>
+  <input
+    type="password"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    required
+    className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+    placeholder="Enter a secure password"
+  />
+</div>
+
+
+
+
           {/* Business Type */}
           <div>
             <label className="block font-medium mb-1">Business Type</label>
@@ -175,6 +229,19 @@ export default function StoreSetup() {
               <option value="Asia/Tokyo">Japan</option>
             </select>
           </div>
+          {/* Timezone Display */}
+<div className="col-span-2">
+  <p className="text-sm text-gray-600 mt-2">
+    🕒 Current Time in {timezone}:{" "}
+    {currentTime.toLocaleString("en-US", { timeZone: timezone })}
+  </p>
+</div>
+          
+  
+
+
+
+
 
           {/* Social Links */}
           <div>
@@ -199,14 +266,19 @@ export default function StoreSetup() {
           {/* Logo */}
           <div>
             <label className="block font-medium mb-1">Store Logo</label>
-            <input type="file" accept="image/*" onChange={handleLogoChange} />
-            {logoPreview && (
-              <img
-                src={logoPreview}
-                alt="Logo Preview"
-                className="mt-2 h-20 rounded"
-              />
-            )}
+            <input
+  type="file"
+  accept="image/*"
+  onChange={handleLogoChange}
+  className="w-full p-2 border rounded bg-white"
+/>
+
+            <img
+  src={logoPreview}
+  alt="Logo"
+  className="mt-2 h-20 rounded shadow-md"
+/>
+
           </div>
 
           {/* Theme Selection */}
@@ -234,23 +306,90 @@ export default function StoreSetup() {
           </div>
 
           {/* Theme Preview */}
-          <div className="md:col-span-2 mt-4 border rounded p-4" style={{ backgroundColor: theme === "light" ? "#ffffff" : "#1f2937", color: theme === "light" ? "#000" : "#fff" }}>
-            <p className="text-center text-lg font-semibold">Live Theme Preview</p>
-            <div className="mt-4 flex items-center justify-center gap-4">
-              {logoPreview && (
-                <img src={logoPreview} alt="Preview" className="h-12 rounded shadow" />
-              )}
-              <span style={{ color: primaryColor }}>{storeName || "Store Name"}</span>
-            </div>
-          </div>
-        </div>
+          {/* Theme Preview */}
+{/* Theme Preview */}
+<div>
+  <h3 className="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-300">
+    Live Theme Preview
+  </h3>
+</div>
+
+<div
+  className="md:col-span-2 mt-2 border rounded shadow p-6 relative"
+  style={{
+    backgroundColor: theme === "light" ? "#ffffff" : "#1f2937",
+    color: theme === "light" ? "#111827" : "#f9fafb",
+    transition: "all 0.3s ease",
+    position: "relative",
+    overflow: "hidden",
+    minHeight: "150px"
+  }}
+>
+  {/* Logo in Top Right */}
+  {logoPreview && (
+    <img
+      src={logoPreview}
+      alt="Logo"
+      className="absolute top-4 right-4 h-12 w-auto object-contain rounded shadow"
+      style={{
+        maxHeight: "60px",
+        maxWidth: "120px"
+      }}
+    />
+  )}
+
+  {/* Centered Store Name */}
+  <div className="flex justify-center items-center h-full">
+    <h1
+      className="text-3xl font-bold text-center"
+      style={{
+        color: primaryColor,
+        textShadow: "1px 1px 3px rgba(0,0,0,0.2)"
+      }}
+    >
+      {storeName || "Your Store Name"}
+    </h1>
+  </div>
+
+  {/* Bottom gradient for style */}
+  <div
+    className="absolute bottom-0 left-0 w-full h-2"
+    style={{
+      background: `linear-gradient(to right, ${primaryColor}, ${shadeColor(
+        primaryColor,
+        -20
+      )})`
+    }}
+  ></div>
+</div>
+
+</div>
+
 
         {/* Submit Button */}
         <button type="submit" className="submit-btn">
   ✅ Save Store Setup
 </button>
 
-      </form>
+   </form>
+   {showSuccessModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-lg shadow-lg p-6 w-96 text-center">
+      <h3 className="text-xl font-bold mb-4">🎉 Store Setup Complete</h3>
+      <p>Your store has been successfully created!</p>
+      <button
+        onClick={() => setShowSuccessModal(false)}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
+
+
+
     </div>
   );
 }
