@@ -8,7 +8,8 @@ const authRoute = require('./routes/auth');
 const feedbackRoute = require('./routes/feedback');
 const statisticsRoutes = require('./routes/statistics'); 
 const overview = require('./routes/overview');
-const stores = require('./routes/stores');
+const stores_backup=require('./routes/stores_backup');
+const customerAuthRoutes = require('./routes/cus_auth');
 const app = express();
 const PORT = 5000;
 
@@ -31,8 +32,8 @@ app.use('/api/auth', authRoute);
 app.use('/api/statistics', statisticsRoutes);
 
 app.use('/api/overview', overview);
-
-app.use('/api/stores' , stores);
+app.use('/api/customer/auth', customerAuthRoutes);
+app.use('/api', require('./routes/stores_backup'));
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

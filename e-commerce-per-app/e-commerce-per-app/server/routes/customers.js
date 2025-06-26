@@ -91,5 +91,24 @@ router.post('/add', authenticateToken, (req, res) => {
     res.status(201).json({ message: 'Customer added successfully' });
   });
 });
+// GET /api/customer/:id - Get single customer details by ID
+router.get('/:id', authenticateToken, (req, res) => {
+  const customerId = req.params.id;
+
+  const sql = `SELECT customer_id AS id, customer_name AS name, email, phone_number AS phone, address, date_joined FROM customers WHERE customer_id = ?`;
+
+  db.query(sql, [customerId], (err, results) => {
+    if (err) {
+      console.error('Error fetching customer:', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    res.json(results[0]);
+  });
+});
 
 module.exports = router;

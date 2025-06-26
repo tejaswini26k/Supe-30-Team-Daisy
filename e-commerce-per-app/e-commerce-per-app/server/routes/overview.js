@@ -7,7 +7,7 @@ const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: '',
-  database: 'e-commerce-db1',
+  database: 'e-commerce-db',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -82,10 +82,10 @@ router.get('/:storeId', async (req, res) => {
       ORDER BY DATE(o.date_ordered)
     `, [storeId]);
 
-    console.log("📦 Top Products:", topProducts);
-console.log("🕓 Pending Orders:", pendingOrders);
-console.log("📈 Order Status Data:", orderStatusData);
-console.log("📅 Daily Revenue:", dailyRevenue);
+// console.log("📦 Top Products:", topProducts);
+// console.log("🕓 Pending Orders:", pendingOrders);
+// console.log("📈 Order Status Data:", orderStatusData);
+// console.log("📅 Daily Revenue:", dailyRevenue);
 
 
     res.json({
