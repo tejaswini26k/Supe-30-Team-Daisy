@@ -1,14 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise'); // <-- use promise version
+
 
 // ✅ DB connection
-const db = mysql.createConnection({
+const db = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: '',
   database: 'e-commerce-db',
 });
+
 
 // ✅ GET: all orders for a store
 router.get('/', (req, res) => {
@@ -199,5 +201,49 @@ router.get('/customers_orders', (req, res) => {
     res.json(results);
   });
 });
+router.post('/checkout', async (req, res) => {
+  console.log('🛒 Checkout Payload:', { body: req.body });
+
+  const { customerId, items } = req.body;
+
+  if (!customerId || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'Invalid checkout data' });
+  }
+
+  const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const conn = await db.getConnection(); // ✅ get pooled connection
+
+  try {
+    await conn.beginTransaction();
+
+    const [orderResult] = await conn.query(
+      'INSERT INTO orders (customer_id, date_ordered, total_amount, status) VALUES (?, NOW(), ?, ?)',
+      [customerId, totalAmount, 'Pending']
+    );
+    const orderId = orderResult.insertId;
+
+    const itemInserts = items.map(item => [
+      orderId, item.product_id, item.quantity, item.store_id
+    ]);
+
+    await conn.query(
+      'INSERT INTO order_items (order_id, product_id, quantity, store_id) VALUES ?',
+      [itemInserts]
+    );
+
+    await conn.commit();
+    res.status(201).json({ message: 'Order placed', orderId });
+
+  } catch (err) {
+    await conn.rollback();
+    console.error('❌ Checkout Error:', err);
+    res.status(500).json({ error: 'Checkout failed' });
+  } finally {
+    conn.release(); // ✅ always release the connection
+  }
+});
+
 
 module.exports = router;
+
