@@ -110,5 +110,35 @@ router.get('/:id', authenticateToken, (req, res) => {
     res.json(results[0]);
   });
 });
+// ✅ GET /api/customers/profile - Get current customer profile from token
+// Inside customers.js
+// GET /api/customers/store - get customers of a specific store
+router.get('/profile', authenticateToken, (req, res) => {
+  const { id, user_type } = req.user;
+
+  if (user_type !== 'customer') {
+    return res.status(403).json({ message: 'Access denied. Not a customer.' });
+  }
+
+  const sql = `
+    SELECT customer_id, customer_name, email, phone_number, address, date_joined
+    FROM customers
+    WHERE customer_id = ?
+  `;
+
+  db.query(sql, [id], (err, results) => {
+    if (err) {
+      console.error("Error fetching customer profile:", err);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    res.json(results[0]); // ✅ Single customer object
+  });
+});
+
 
 module.exports = router;
