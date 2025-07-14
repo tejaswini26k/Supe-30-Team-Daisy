@@ -5,7 +5,7 @@ const customerRoute = require('./routes/customers');
 const ordersRoute = require('./routes/orders');
 const customerORoute = require('./routes/customers_orders');
 const authRoute = require('./routes/auth');
-const feedbackRoutes = require('./routes/feedback');
+
 const statisticsRoutes = require('./routes/statistics'); 
 const overview = require('./routes/overview');
 const stores_backup=require('./routes/stores_backup');
@@ -27,7 +27,8 @@ app.use('/api/orders', ordersRoute);
 app.use('/api/customers_orders', customerORoute);
 app.use('/api/stripe', stripeRoutes); 
 
-app.use('/api/feedback', feedbackRoutes);
+app.use('/api/feedback', require('./routes/feedback'));
+
 app.use('/api/auth', authRoute);
 
 app.use('/api/statistics', statisticsRoutes);
