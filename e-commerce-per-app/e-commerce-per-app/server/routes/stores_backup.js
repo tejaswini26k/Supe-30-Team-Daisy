@@ -152,6 +152,20 @@ router.get('/stores_backup/:id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+// routes/stores.js or similar
+router.get('/slug/:slug', async (req, res) => {
+  const { slug } = req.params;
+  try {
+    const store = await Store.findOne({ slug }); // Sequelize / Mongoose / raw SQL
+    if (!store) {
+      return res.status(404).json({ message: 'Store not found' });
+    }
+    res.json({ store });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 
 module.exports = router;
