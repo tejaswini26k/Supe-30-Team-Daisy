@@ -13,26 +13,33 @@ const db = mysql.createPool({
 
 
 // ✅ GET: all orders for a store
-router.get('/', (req, res) => {
+// GET /api/orders
+router.get('/', async (req, res) => {
   const storeId = req.query.storeId;
-  if (!storeId) return res.status(400).json({ error: 'storeId is required in query' });
 
-  const sql = `
-    SELECT o.order_id, o.date_ordered, o.total_amount, o.status, c.customer_name
-    FROM orders o
-    JOIN customers c ON o.customer_id = c.customer_id
-    WHERE c.store_id = ?
-    ORDER BY o.date_ordered DESC
-  `;
+  if (!storeId) {
+    return res.status(400).json({ message: 'Missing storeId' });
+  }
 
-  db.query(sql, [storeId], (err, results) => {
-    if (err) {
-      console.error('🔴 Error fetching orders:', err.message);
-      return res.status(500).json({ error: 'Database error while fetching orders' });
-    }
+  try {
+    const [results] = await db.query(
+      `SELECT o.order_id, o.date_ordered, o.total_amount, o.status,
+              COALESCE(c.customer_name, 'Guest') AS customer_name
+       FROM orders o
+       LEFT JOIN customers c ON o.customer_id = c.customer_id
+       WHERE o.store_id = ?`,
+      [storeId]
+    );
+
     res.json(results);
-  });
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({ message: 'Server error while fetching orders.' });
+  }
 });
+
+
+
 
 // ✅ POST: create new order with store_id
 router.post('/', (req, res) => {
@@ -43,9 +50,9 @@ router.post('/', (req, res) => {
   }
 
   const orderSql = `
-    INSERT INTO orders (date_ordered, total_amount, customer_id, status)
-    VALUES (NOW(), ?, ?, ?)
-  `;
+  INSERT INTO orders (date_ordered, total_amount, customer_id, status, store_id)
+  VALUES (NOW(), ?, ?, ?, ?)
+`;
 
   db.query(orderSql, [total_amount, customer_id, status], (err, result) => {
     if (err) {
