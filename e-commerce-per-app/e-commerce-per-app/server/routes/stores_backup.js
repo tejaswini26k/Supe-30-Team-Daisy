@@ -30,7 +30,7 @@ const upload = multer({ storage });
 
 // ✅ POST /api/stores_backup — Create new store
 // ✅ POST /api/stores_backup — Create new store
-router.post('/stores_backup', upload.fields([
+router.post('/', upload.fields([
   { name: 'logo', maxCount: 1 },
   { name: 'banner_image', maxCount: 1 }
 ]), async (req, res) => {
@@ -95,7 +95,7 @@ router.post('/stores_backup', upload.fields([
 
 // ✅ GET /api/stores_backup — Get all stores
 // GET store info from store_backup using the authenticated user's store_id
-router.get('/api/stores_backup',async (req, res) => {
+router.get('/',async (req, res) => {
   const user = req.user; // Populated by authenticateToken middleware
 
   if (!user || !user.store_id) {
@@ -122,9 +122,10 @@ router.get('/api/stores_backup',async (req, res) => {
 
 // ✅ GET /api/stores_backup/:id — Get store by ID
 // ✅ GET /api/stores_backup/:id — Get store and its products by store_id
-router.get('/stores_backup/:id', async (req, res) => {
+router.get('/:store_id', async (req, res) => {
   try {
-    const storeId = req.params.id;
+    const storeId = req.params.store_id;
+
 
     // Fetch store details from stores_backup
     const [storeRows] = await pool.query(
@@ -164,6 +165,64 @@ router.get('/slug/:slug', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
+  }
+});
+// ✅ PUT /api/stores_backup/:id — Update store by ID
+router.put('/:store_id', upload.fields([
+  { name: 'logo', maxCount: 1 },
+  { name: 'banner_image', maxCount: 1 }
+]), async (req, res) => {
+  try {
+    const storeId = req.params.store_id;
+
+
+    const {
+      store_name, slug, description, store_email, store_address,
+      facebook, instagram, theme, primary_color,
+      currency, timezone, business_type
+    } = req.body;
+
+    const logo = req.files?.logo?.[0] ? `/uploads/${req.files.logo[0].filename}` : null;
+    const banner_image = req.files?.banner_image?.[0] ? `/uploads/${req.files.banner_image[0].filename}` : null;
+
+    const fields = [
+      store_name, store_email, store_address, slug, description,
+      facebook, instagram, theme, primary_color, currency,
+      timezone, business_type
+    ];
+
+    // Conditional parts
+    let query = `
+      UPDATE stores_backup SET
+        store_name = ?, store_email = ?, store_address = ?, slug = ?,
+        description = ?, facebook = ?, instagram = ?, theme = ?, primary_color = ?,
+        currency = ?, timezone = ?, business_type = ?, updated_at = NOW()
+    `;
+
+    if (logo) {
+      query += `, logo = ?`;
+      fields.push(logo);
+    }
+
+    if (banner_image) {
+      query += `, banner_image = ?`;
+      fields.push(banner_image);
+    }
+
+    query += ` WHERE store_id = ?`;
+    fields.push(storeId);
+
+    const [result] = await pool.query(query, fields);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Store not found or nothing updated' });
+    }
+
+    res.json({ message: '✅ Store updated successfully' });
+
+  } catch (err) {
+    console.error('❌ Store update error:', err);
+    res.status(500).json({ error: err.message });
   }
 });
 

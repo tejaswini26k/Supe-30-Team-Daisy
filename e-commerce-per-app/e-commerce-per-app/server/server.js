@@ -36,7 +36,7 @@ app.use('/api/statistics', statisticsRoutes);
 app.use('/api/overview', overview);
 
 app.use('/api/customer/auth', customerAuthRoutes);
-app.use('/api', require('./routes/stores_backup'));
+app.use('/api/stores_backup', require('./routes/stores_backup'));
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
