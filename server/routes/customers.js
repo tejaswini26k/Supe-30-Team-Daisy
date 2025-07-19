@@ -91,5 +91,57 @@ router.post('/add', authenticateToken, (req, res) => {
     res.status(201).json({ message: 'Customer added successfully' });
   });
 });
+<<<<<<< HEAD
+=======
+// GET /api/customer/:id - Get single customer details by ID
+router.get('/:id', authenticateToken, (req, res) => {
+  const customerId = req.params.id;
+
+  const sql = `SELECT customer_id AS id, customer_name AS name, email, phone_number AS phone, address, date_joined FROM customers WHERE customer_id = ?`;
+
+  db.query(sql, [customerId], (err, results) => {
+    if (err) {
+      console.error('Error fetching customer:', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    res.json(results[0]);
+  });
+});
+// ✅ GET /api/customers/profile - Get current customer profile from token
+// Inside customers.js
+// GET /api/customers/store - get customers of a specific store
+router.get('/profile', authenticateToken, (req, res) => {
+  const { id, user_type } = req.user;
+
+  if (user_type !== 'customer') {
+    return res.status(403).json({ message: 'Access denied. Not a customer.' });
+  }
+
+  const sql = `
+    SELECT customer_id, customer_name, email, phone_number, address, date_joined
+    FROM customers
+    WHERE customer_id = ?
+  `;
+
+  db.query(sql, [id], (err, results) => {
+    if (err) {
+      console.error("Error fetching customer profile:", err);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    res.json(results[0]); // ✅ Single customer object
+  });
+});
+
+>>>>>>> aad073f (Initial commit with client and server folders)
 
 module.exports = router;

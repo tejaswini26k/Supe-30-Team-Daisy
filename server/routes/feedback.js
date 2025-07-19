@@ -31,6 +31,10 @@ function authenticateToken(req, res, next) {
 router.get('/', authenticateToken, (req, res) => {
   const { store_id, user_type } = req.user;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> aad073f (Initial commit with client and server folders)
   // Optional: Only allow shop_owner to access
   if (user_type !== 'shop_owner') {
     return res.status(403).json({ message: 'Access denied' });
@@ -60,5 +64,39 @@ router.get('/', authenticateToken, (req, res) => {
     res.json(results);
   });
 });
+<<<<<<< HEAD
+=======
+// POST /api/feedback/add
+router.post('/add', authenticateToken, (req, res) => {
+  console.log('💬 req.user in POST /feedback/add:', req.user);  // already here
+  console.log('💬 user_type:', req.user.user_type);             // add this
+  console.log('💬 customer_id:', req.user.customer_id);         // add this
+
+  const { rating, product_id, review_description } = req.body;
+  const { customer_id, store_id, user_type } = req.user;
+
+  if (user_type !== 'customer') {
+    return res.status(403).json({ message: 'Only customers can submit feedback.' });
+  }
+  const review_date = new Date().toISOString().slice(0, 10);
+
+  const sql = `
+    INSERT INTO feedback 
+    (review_date, customer_id, rating, product_id, store_id, review_description) 
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(sql, [review_date, customer_id, rating, product_id, store_id, review_description], (err) => {
+    if (err) {
+      console.error('Error saving feedback:', err);
+      return res.status(500).json({ message: 'Failed to save feedback' });
+    }
+
+    res.status(201).json({ message: 'Feedback submitted successfully' });
+  });
+});
+
+
+>>>>>>> aad073f (Initial commit with client and server folders)
 
 module.exports = router;
