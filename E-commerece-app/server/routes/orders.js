@@ -193,9 +193,9 @@ router.get('/customers_orders', async (req, res) => {
 
 // ✅ POST: Checkout endpoint (optional)
 router.post('/checkout', async (req, res) => {
-  const { customerId, items } = req.body;
+  const { customerId, items, storeId } = req.body;
 
-  if (!customerId || !Array.isArray(items) || items.length === 0) {
+  if (!customerId || !Array.isArray(items) || items.length === 0 || !storeId) {
     return res.status(400).json({ error: 'Invalid checkout data' });
   }
 
@@ -207,8 +207,8 @@ router.post('/checkout', async (req, res) => {
     await conn.beginTransaction();
 
     const [orderResult] = await conn.query(
-      'INSERT INTO orders (customer_id, date_ordered, total_amount, status) VALUES (?, NOW(), ?, ?)',
-      [customerId, totalAmount, 'Pending']
+      'INSERT INTO orders (customer_id, store_id, date_ordered, total_amount, status) VALUES (?, ?, NOW(), ?, ?)',
+      [customerId, storeId, totalAmount, 'Pending']
     );
 
     const orderId = orderResult.insertId;
@@ -232,5 +232,6 @@ router.post('/checkout', async (req, res) => {
     conn.release();
   }
 });
+
 
 module.exports = router;
