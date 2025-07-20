@@ -31,10 +31,7 @@ function authenticateToken(req, res, next) {
 router.get('/', authenticateToken, (req, res) => {
   const { store_id, user_type } = req.user;
 
-<<<<<<< HEAD
-=======
 
->>>>>>> aad073f (Initial commit with client and server folders)
   // Optional: Only allow shop_owner to access
   if (user_type !== 'shop_owner') {
     return res.status(403).json({ message: 'Access denied' });
@@ -64,8 +61,6 @@ router.get('/', authenticateToken, (req, res) => {
     res.json(results);
   });
 });
-<<<<<<< HEAD
-=======
 // POST /api/feedback/add
 router.post('/add', authenticateToken, (req, res) => {
   console.log('💬 req.user in POST /feedback/add:', req.user);  // already here
@@ -97,6 +92,5 @@ router.post('/add', authenticateToken, (req, res) => {
 });
 
 
->>>>>>> aad073f (Initial commit with client and server folders)
 
 module.exports = router;
