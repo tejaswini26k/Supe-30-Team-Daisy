@@ -91,8 +91,6 @@ router.post('/add', authenticateToken, (req, res) => {
     res.status(201).json({ message: 'Customer added successfully' });
   });
 });
-<<<<<<< HEAD
-=======
 // GET /api/customer/:id - Get single customer details by ID
 router.get('/:id', authenticateToken, (req, res) => {
   const customerId = req.params.id;
@@ -142,6 +140,5 @@ router.get('/profile', authenticateToken, (req, res) => {
   });
 });
 
->>>>>>> aad073f (Initial commit with client and server folders)
 
 module.exports = router;
