@@ -7,11 +7,7 @@ const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: '',
-<<<<<<< HEAD
-  database: 'e-commerce-db1',
-=======
   database: 'e-commerce-db',
->>>>>>> aad073f (Initial commit with client and server folders)
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -43,22 +39,12 @@ router.get('/:storeId', async (req, res) => {
       WHERE store_id = ?
     `, [storeId]);
 
-<<<<<<< HEAD
-    // 4. Total Revenue
-    const [[revenue]] = await pool.query(`
-      SELECT SUM(o.total_amount) AS revenue
-      FROM orders o
-      JOIN customers c ON o.customer_id = c.customer_id
-      WHERE c.store_id = ?
-    `, [storeId]);
-=======
    // 4. Total Revenue from sales table directly by store_id
 const [[revenue]] = await pool.query(`
   SELECT SUM(total_sale_amount) AS revenue
   FROM sales
   WHERE store_id = ?
 `, [storeId]);
->>>>>>> aad073f (Initial commit with client and server folders)
 
     // 5. Top Selling Products
     const [topProducts] = await pool.query(`
@@ -95,17 +81,10 @@ const [[revenue]] = await pool.query(`
       ORDER BY DATE(o.date_ordered)
     `, [storeId]);
 
-<<<<<<< HEAD
-    console.log("📦 Top Products:", topProducts);
-console.log("🕓 Pending Orders:", pendingOrders);
-console.log("📈 Order Status Data:", orderStatusData);
-console.log("📅 Daily Revenue:", dailyRevenue);
-=======
 // console.log("📦 Top Products:", topProducts);
 // console.log("🕓 Pending Orders:", pendingOrders);
 // console.log("📈 Order Status Data:", orderStatusData);
 // console.log("📅 Daily Revenue:", dailyRevenue);
->>>>>>> aad073f (Initial commit with client and server folders)
 
 
     res.json({
@@ -125,8 +104,4 @@ console.log("📅 Daily Revenue:", dailyRevenue);
   }
 });
 
-<<<<<<< HEAD
 module.exports = router;
-=======
-module.exports = router;
->>>>>>> aad073f (Initial commit with client and server folders)
