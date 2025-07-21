@@ -1,4 +1,4 @@
 [build]
-base = "e-commerce-per-app/e-commerce-per-app/client"
+base = "e-commerce-per-app/client"
 command = "npm run build"
-publish = "build"  # Use "build" if that's your output folder
+publish = "build"
