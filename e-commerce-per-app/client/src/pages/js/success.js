@@ -23,7 +23,7 @@ const SuccessPage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("customerToken");
-    navigate(`/store/${storeId}/login`);
+    navigate(`/store/${storeId}/template`);
   };
 
   const handleAddFeedback = () => {
