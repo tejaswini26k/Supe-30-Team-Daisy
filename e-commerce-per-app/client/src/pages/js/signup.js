@@ -35,7 +35,7 @@ const SignUp = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('/signup', {
+      const response = await fetch('https://dukaanify.netlify.app/.netlify/functions/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

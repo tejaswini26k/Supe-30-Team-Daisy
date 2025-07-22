@@ -23,7 +23,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('/login', {
+      const response = await axios.post('https://dukaanify.netlify.app/.netlify/functions/login', {
         email,
         password,
         rememberMe
