@@ -33,7 +33,7 @@ export default function Stores() {
 
   const fetchUserStoreStatus = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/auth/users/${storedEmail}`);
+      const res = await fetch(`/auth/users/${storedEmail}`);
       const data = await res.json();
 
       const backendStoreId = data.store_id;
