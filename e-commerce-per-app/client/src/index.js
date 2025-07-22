@@ -25,7 +25,7 @@ import Login from "./pages/js/login";
 import SignUp from "./pages/js/signup";
 import AdminOverview from './pages/js/admin-overview';
 import AddOrder from './pages/js/addOrders';
-import AddCategory from './pages/js/AddCategory';
+
 import AddProduct from './pages/js/addProducts';
 import AddCustomer from './pages/js/addCustomer';
 // import AddCustomer from './pages/js/addCustomer';
@@ -35,8 +35,8 @@ import Template from './pages/js/template';
 import AddFeedback from './pages/js/Addfeedback'; 
 import CartPage from './pages/js/Cartpage';
 import { CartProvider } from './pages/js/CartContext'; 
-import Customer_Login from './pages/js/CustomerLogin'; 
-import Customer_Signup from './pages/js/CustomerSignup';
+import CustomerLogin from './pages/js/CustomerLogin'; 
+import CustomerSignup from './pages/js/CustomerSignup';
 import CustomerProfile from './pages/js/CustomerProfile'; 
 import SuccessPage from './pages/js/success';
 import Storetemplate from './pages/js/Storetemplate';
@@ -51,7 +51,7 @@ root.render(
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/addorder" element={<AddOrder />} />
-        <Route path="/add-category" element={<AddCategory />} />
+        
         <Route path="/store/:storeId/add" element={<AddFeedback />} />
 
         <Route path="/add-product" element={<AddProduct />} />
@@ -61,8 +61,8 @@ root.render(
         <Route path="/store/:storeId/Storetemplate" element={<Storetemplate />} />
        <Route path="/store/:storeId/success" element={<SuccessPage />} />
         <Route path="/store/:storeId/cart" element={<CartPage />} />
-        <Route path="/store/:storeId/login" element={<Customer_Login />} />
-  <Route path="/store/:storeId/signup" element={<Customer_Signup />} />
+        <Route path="/store/:storeId/login" element={<CustomerLogin />} />
+  <Route path="/store/:storeId/signup" element={<CustomerSignup />} />
   <Route path="/store/:storeId/CustomerProfile" element={<CustomerProfile />} />
  <Route path="/store/:slug" element={<Storetemplate />} />
 

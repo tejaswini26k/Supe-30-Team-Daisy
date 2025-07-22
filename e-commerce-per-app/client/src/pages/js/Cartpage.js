@@ -4,12 +4,11 @@ import '../css/cart.css';
 import { useCart } from '../js/CartContext';
 import Header from "../components/header";
 import React, { useState, useEffect } from 'react'; 
-import axios from 'axios';
 import {loadStripe} from "@stripe/stripe-js"
 const CartPage = () => {
   const { storeId } = useParams();
   const navigate = useNavigate();
-  const { cartItems, updateQuantity, removeFromCart, setCartItems } = useCart();
+  const { cartItems, updateQuantity, removeFromCart } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {

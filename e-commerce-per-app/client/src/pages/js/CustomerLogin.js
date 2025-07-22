@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import '../css/Customer_Login.css';
 import cus_login_img from '../../images/cus_login.jpg';
 import axios from 'axios';
-import { useCart } from '../js/CartContext'; // ✅ Import useCart
+import { useCart } from './CartContext'; // ✅ Import useCart
 
 function Customer_Login() {
   const [cusEmail, setCusEmail] = useState('');

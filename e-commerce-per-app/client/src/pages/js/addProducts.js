@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../css/addProducts.css';
-import AdminOverview from './admin-overview';
+
 
 const AddProduct = () => {
   const navigate = useNavigate();

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../css/Customer_Signup.css';
 import cus_signup_img from '../../images/cus_signup.jpg';
@@ -47,7 +47,7 @@ function Customer_Signup() {
     setError('');
 
     try {
-      const res = await axios.post('http://localhost:5000/api/customer/auth/signup', {
+      await axios.post('http://localhost:5000/api/customer/auth/signup', {
         customer_name: cusName,
         email: cusEmail,
         password: cusPassword,

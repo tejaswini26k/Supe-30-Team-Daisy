@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../css/overview.css';
-import { FiEye } from 'react-icons/fi';
 import {
   PieChart, Pie, Cell, Tooltip, Legend, LineChart, Line, XAxis, YAxis,
   CartesianGrid, ResponsiveContainer
 } from 'recharts';
-import { useNavigate } from 'react-router-dom';
+
 
 const COLORS = ['#4B9FE1', '#69C2B0', '#FFD166', '#FF8C94', '#A29BFE', '#A3CEDC'];
 
 const Overview = () => {
-  const navigate = useNavigate();
-  const [store, setStore] = useState(null);
+ 
+  const [ setStore] = useState(null);
   const [data, setData] = useState({
     orders: 0,
     productsSold: 0,
@@ -75,7 +74,8 @@ const Overview = () => {
 
     fetchOverview();
     fetchStore();
-  }, [storeId, token]);
+}, [storeId, token, setStore]);
+
 
   return (
     <>
