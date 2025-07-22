@@ -23,7 +23,7 @@ const AddCustomer = () => {
     try {
       const token = localStorage.getItem('authToken');
 
-      const response = await fetch('http://localhost:5000/api/customers/add', {
+      const response = await fetch('/.netlify/functions/add-customer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
