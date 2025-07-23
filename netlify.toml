@@ -1,5 +1,0 @@
-[build]
-base = "e-commerce-per-app/client"
-command = "npm run build"
-publish = "build"
-directory = "netlify/functions"
