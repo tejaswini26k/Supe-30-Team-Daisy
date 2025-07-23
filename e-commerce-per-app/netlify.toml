@@ -1,5 +1,5 @@
 [build]
-base = "e-commerce-per-app"
+base = "client"
 publish = "build"
 command = "npm run build"
 
