@@ -35,7 +35,7 @@ const SignUp = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('/.netlify/functions/signup', {
+      const response = await fetch('/netlify/functions/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

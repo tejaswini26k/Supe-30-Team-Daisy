@@ -23,7 +23,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('/.netlify/functions/login', {
+      const response = await axios.post('/netlify/functions/login', {
         email,
         password,
         rememberMe
